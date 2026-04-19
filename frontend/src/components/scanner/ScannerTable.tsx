@@ -4,40 +4,37 @@ import { useMemo } from "react";
 import Link from "next/link";
 import { TrendingUp, TrendingDown, Activity, ChevronRight } from "lucide-react";
 import type { ScannerFilterState } from "./ScannerFilters";
-
-interface ScannerRow {
-  symbol: string;
-  lastPrice: number;
-  change: number;
-  strategy: string;
-  confidence: number;
-  volumeSpike: number;
-  trend: "bullish" | "bearish";
-}
-
-const mockData: ScannerRow[] = [
-  { symbol: "BTCUSDT", lastPrice: 67845.32, change: 2.4, strategy: "Breakout", confidence: 94, volumeSpike: 245, trend: "bullish" },
-  { symbol: "ETHUSDT", lastPrice: 3421.67, change: 3.2, strategy: "Momentum", confidence: 91, volumeSpike: 189, trend: "bullish" },
-  { symbol: "SOLUSDT", lastPrice: 142.34, change: -1.8, strategy: "Reversal", confidence: 87, volumeSpike: 156, trend: "bearish" },
-  { symbol: "BNBUSDT", lastPrice: 589.21, change: 1.5, strategy: "Swing Trade", confidence: 85, volumeSpike: 134, trend: "bullish" },
-  { symbol: "ADAUSDT", lastPrice: 0.5634, change: 4.1, strategy: "Breakout", confidence: 82, volumeSpike: 298, trend: "bullish" },
-  { symbol: "DOTUSDT", lastPrice: 7.89, change: -0.9, strategy: "Scalping", confidence: 79, volumeSpike: 112, trend: "bearish" },
-  { symbol: "MATICUSDT", lastPrice: 0.8745, change: 2.8, strategy: "Momentum", confidence: 76, volumeSpike: 167, trend: "bullish" },
-  { symbol: "AVAXUSDT", lastPrice: 38.92, change: -2.1, strategy: "Reversal", confidence: 74, volumeSpike: 145, trend: "bearish" },
-  { symbol: "LINKUSDT", lastPrice: 15.67, change: 1.2, strategy: "Swing Trade", confidence: 71, volumeSpike: 98, trend: "bullish" },
-  { symbol: "ATOMUSDT", lastPrice: 9.23, change: 3.6, strategy: "Breakout", confidence: 69, volumeSpike: 203, trend: "bullish" },
-  { symbol: "NEARUSDT", lastPrice: 5.43, change: -1.4, strategy: "Scalping", confidence: 67, volumeSpike: 87, trend: "bearish" },
-  { symbol: "UNIUSDT", lastPrice: 8.92, change: 2.1, strategy: "Momentum", confidence: 64, volumeSpike: 156, trend: "bullish" },
-];
+import { mockScannerRows, type ScannerRow } from "@/lib/mock-scanner";
 
 const GRID = "grid-cols-[1.1fr_1fr_1.2fr_1fr_1fr_0.8fr_0.8fr]";
 
-type ScannerTableProps = Pick<ScannerFilterState, "searchTerm" | "strategy" | "confidence" | "sentiment">;
+interface ScannerTableProps {
+  filters: Pick<
+    ScannerFilterState,
+    "searchTerm" | "timeframe" | "strategy" | "confidence" | "sentiment"
+  >;
+  rows?: ScannerRow[];
+}
 
 /** Strategy select values (e.g. "swing") prefix-match row labels ("Swing Trade"). */
 function matchesStrategyFilter(rowStrategy: string, selected: string): boolean {
   if (selected === "all") return true;
   return rowStrategy.toLowerCase().startsWith(selected.toLowerCase());
+}
+
+function applyFilters(
+  rows: ScannerRow[],
+  filters: ScannerTableProps["filters"],
+): ScannerRow[] {
+  const query = filters.searchTerm.trim().toLowerCase();
+  return rows.filter((row) => {
+    if (query && !row.symbol.toLowerCase().includes(query)) return false;
+    if (filters.timeframe !== "all" && row.timeframe !== filters.timeframe) return false;
+    if (!matchesStrategyFilter(row.strategy, filters.strategy)) return false;
+    if (row.confidence < filters.confidence) return false;
+    if (filters.sentiment !== "all" && row.trend !== filters.sentiment) return false;
+    return true;
+  });
 }
 
 function ConfidenceBar({ value }: { value: number }) {
@@ -112,6 +109,7 @@ function MobileRow({ row }: { row: ScannerRow }) {
         <div>
           <div className="text-xs text-gray-400 mb-0.5">Strategy</div>
           <div className="text-gray-300 text-sm">{row.strategy}</div>
+          <div className="text-xs text-gray-500 mt-0.5 uppercase">{row.timeframe}</div>
         </div>
         <div>
           <div className="text-xs text-gray-400 mb-1">Confidence</div>
@@ -126,17 +124,8 @@ function MobileRow({ row }: { row: ScannerRow }) {
   );
 }
 
-export function ScannerTable({ searchTerm, strategy, confidence, sentiment }: ScannerTableProps) {
-  const filteredData = useMemo(() => {
-    const query = searchTerm.trim().toLowerCase();
-    return mockData.filter((row) => {
-      if (query && !row.symbol.toLowerCase().includes(query)) return false;
-      if (!matchesStrategyFilter(row.strategy, strategy)) return false;
-      if (row.confidence < confidence) return false;
-      if (sentiment !== "all" && row.trend !== sentiment) return false;
-      return true;
-    });
-  }, [searchTerm, strategy, confidence, sentiment]);
+export function ScannerTable({ filters, rows = mockScannerRows }: ScannerTableProps) {
+  const filteredData = useMemo(() => applyFilters(rows, filters), [rows, filters]);
 
   return (
     <div className="h-full flex flex-col bg-[#0d0d12] rounded-lg border border-white/5 overflow-hidden">
@@ -179,8 +168,11 @@ export function ScannerTable({ searchTerm, strategy, confidence, sentiment }: Sc
                 </span>
               </div>
 
-              <div className="flex items-center">
+              <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-300">{row.strategy}</span>
+                <span className="text-[10px] uppercase text-gray-500 tracking-wider tabular-nums">
+                  {row.timeframe}
+                </span>
               </div>
 
               <div className="flex items-center">
@@ -209,7 +201,7 @@ export function ScannerTable({ searchTerm, strategy, confidence, sentiment }: Sc
         </div>
 
         {filteredData.length === 0 && (
-          <div className="flex items-center justify-center h-32 text-gray-500">
+          <div className="flex items-center justify-center h-32 text-gray-500 text-sm">
             No opportunities match the current filters.
           </div>
         )}

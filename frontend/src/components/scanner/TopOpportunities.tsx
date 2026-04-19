@@ -1,22 +1,21 @@
 import Link from "next/link";
 import { TrendingUp, TrendingDown, Zap, Target } from "lucide-react";
+import {
+  mockScannerOpportunities,
+  mockScannerFooter,
+  type ScannerOpportunity,
+  type ScannerFooterStats,
+} from "@/lib/mock-scanner";
 
-interface Opportunity {
-  symbol: string;
-  strategy: string;
-  confidence: number;
-  change: number;
-  trend: "bullish" | "bearish";
-  signal: string;
+interface TopOpportunitiesProps {
+  opportunities?: ScannerOpportunity[];
+  footer?: ScannerFooterStats;
 }
 
-const topOpportunities: Opportunity[] = [
-  { symbol: "BTCUSDT", strategy: "Breakout", confidence: 94, change: 2.4, trend: "bullish", signal: "Strong buy pressure" },
-  { symbol: "ETHUSDT", strategy: "Momentum", confidence: 91, change: 3.2, trend: "bullish", signal: "Volume surge detected" },
-  { symbol: "ADAUSDT", strategy: "Breakout", confidence: 82, change: 4.1, trend: "bullish", signal: "Key resistance broken" },
-];
-
-export function TopOpportunities() {
+export function TopOpportunities({
+  opportunities = mockScannerOpportunities,
+  footer = mockScannerFooter,
+}: TopOpportunitiesProps) {
   return (
     <div className="h-full flex flex-col gap-3">
       <div className="flex items-center gap-2 px-1">
@@ -25,12 +24,11 @@ export function TopOpportunities() {
       </div>
 
       <div className="flex-1 flex flex-col gap-3 overflow-y-auto scrollbar-thin">
-        {topOpportunities.map((opp, index) => (
+        {opportunities.map((opp, index) => (
           <article
             key={opp.symbol}
             className="relative bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-lg border border-blue-500/20 p-4 hover:border-blue-500/40 transition-all group"
           >
-            {/* Rank badge */}
             <div className="absolute -top-2 -left-2 size-6 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
               <span className="text-xs text-black font-medium">{index + 1}</span>
             </div>
@@ -81,17 +79,22 @@ export function TopOpportunities() {
             </div>
           </article>
         ))}
+
+        {opportunities.length === 0 && (
+          <div className="text-sm text-gray-500 text-center py-8">
+            No opportunities right now.
+          </div>
+        )}
       </div>
 
-      {/* Stats footer */}
       <div className="grid grid-cols-2 gap-2 p-3 rounded-lg bg-white/5 border border-white/10">
         <div className="text-center">
           <div className="text-xs text-gray-400">Active Signals</div>
-          <div className="text-lg text-emerald-400">12</div>
+          <div className="text-lg text-emerald-400 tabular-nums">{footer.activeSignals}</div>
         </div>
         <div className="text-center">
           <div className="text-xs text-gray-400">Win Rate</div>
-          <div className="text-lg text-blue-400">87%</div>
+          <div className="text-lg text-blue-400 tabular-nums">{footer.winRate}%</div>
         </div>
       </div>
     </div>

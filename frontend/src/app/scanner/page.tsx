@@ -42,12 +42,7 @@ export default function ScannerPage() {
 
       <div className="flex-1 flex flex-col lg:flex-row gap-4 p-4 overflow-hidden min-h-0">
         <div className="flex-1 min-h-[400px] lg:min-h-0 overflow-hidden">
-          <ScannerTable
-            searchTerm={filters.searchTerm}
-            strategy={filters.strategy}
-            confidence={filters.confidence}
-            sentiment={filters.sentiment}
-          />
+          <ScannerTable filters={filters} />
         </div>
 
         <aside className="w-full lg:w-80 shrink-0 lg:max-h-full">
