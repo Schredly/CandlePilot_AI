@@ -3,16 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import type { AlertSignalType } from "./AlertCard";
+import type { AlertSignalType, SavedRule } from "@/lib/mock-alerts";
 
-export interface SavedAlertRuleProps {
-  symbol: string;
-  signalType: AlertSignalType;
-  targetPrice?: string;
-  minConfidence: number;
-  isActive: boolean;
-  notificationChannels: string[];
+interface SavedAlertRuleProps extends SavedRule {
+  onToggle?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
+
+export type { SavedAlertRuleProps };
 
 function RuleIcon({ type }: { type: AlertSignalType }) {
   switch (type) {
@@ -28,12 +26,15 @@ function RuleIcon({ type }: { type: AlertSignalType }) {
 }
 
 export function SavedAlertRule({
+  id,
   symbol,
   signalType,
   targetPrice,
   minConfidence,
   isActive,
   notificationChannels,
+  onToggle,
+  onDelete,
 }: SavedAlertRuleProps) {
   return (
     <Card className="bg-slate-900/50 border-slate-800 p-4 gap-0">
@@ -74,7 +75,11 @@ export function SavedAlertRule({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <Switch defaultChecked={isActive} aria-label={`${isActive ? "Pause" : "Activate"} ${symbol} rule`} />
+          <Switch
+            checked={isActive}
+            onCheckedChange={onToggle ? () => onToggle(id) : undefined}
+            aria-label={`${isActive ? "Pause" : "Activate"} ${symbol} rule`}
+          />
           <Button
             size="sm"
             variant="outline"
@@ -87,6 +92,7 @@ export function SavedAlertRule({
             size="sm"
             variant="outline"
             aria-label="Delete rule"
+            onClick={onDelete ? () => onDelete(id) : undefined}
             className="border-slate-700 hover:bg-rose-900/20 hover:border-rose-800 h-8 px-2"
           >
             <Trash2 className="size-3" />

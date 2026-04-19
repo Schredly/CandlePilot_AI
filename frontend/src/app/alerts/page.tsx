@@ -1,48 +1,46 @@
-import type { Metadata } from "next";
+"use client";
+
 import { Bell, Clock, FileText } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { AlertCard, type AlertCardProps } from "@/components/alerts/AlertCard";
+import { AlertCard } from "@/components/alerts/AlertCard";
 import { CreateAlertPanel } from "@/components/alerts/CreateAlertPanel";
-import { SavedAlertRule, type SavedAlertRuleProps } from "@/components/alerts/SavedAlertRule";
+import { CreateAlertDialog } from "@/components/alerts/CreateAlertDialog";
+import { SavedAlertRule } from "@/components/alerts/SavedAlertRule";
 import { NotificationPreferences } from "@/components/alerts/NotificationPreferences";
+import { useAlertsStore } from "@/hooks/use-alerts-store";
 
-export const metadata: Metadata = { title: "Alerts" };
-
-const newAlerts: AlertCardProps[] = [
-  { symbol: "BTC/USDT", signalType: "bullish", time: "2 min ago", confidence: 92, price: "$68,450", change: "+2.4%", isNew: true },
-  { symbol: "ETH/USDT", signalType: "breakout", time: "5 min ago", confidence: 87, price: "$3,245", change: "+3.1%", isNew: true },
-  { symbol: "SOL/USDT", signalType: "bullish", time: "12 min ago", confidence: 78, price: "$142.50", change: "+1.8%", isNew: true },
-];
-
-const triggeredAlerts: AlertCardProps[] = [
-  { symbol: "BTC/USDT", signalType: "reversal", time: "1 hour ago", confidence: 85, price: "$67,890", change: "-0.8%" },
-  { symbol: "MATIC/USDT", signalType: "bearish", time: "2 hours ago", confidence: 73, price: "$0.82", change: "-1.5%" },
-  { symbol: "AVAX/USDT", signalType: "breakout", time: "3 hours ago", confidence: 81, price: "$38.20", change: "+4.2%" },
-  { symbol: "DOT/USDT", signalType: "bullish", time: "5 hours ago", confidence: 69, price: "$7.45", change: "+2.1%" },
-];
-
-const savedRules: SavedAlertRuleProps[] = [
-  { symbol: "BTC/USDT", signalType: "bullish", targetPrice: "$70,000", minConfidence: 80, isActive: true, notificationChannels: ["Push", "Email"] },
-  { symbol: "ETH/USDT", signalType: "breakout", targetPrice: "$3,500", minConfidence: 75, isActive: true, notificationChannels: ["Push"] },
-  { symbol: "SOL/USDT", signalType: "bearish", minConfidence: 70, isActive: false, notificationChannels: ["Email", "SMS"] },
-  { symbol: "MATIC/USDT", signalType: "reversal", targetPrice: "$1.00", minConfidence: 65, isActive: true, notificationChannels: ["Push"] },
-];
+const emptyCopy =
+  "bg-slate-900/30 border border-slate-800 rounded-lg text-center text-sm text-slate-500 py-10";
 
 export default function AlertsPage() {
+  const {
+    newAlerts,
+    triggeredAlerts,
+    rules,
+    createRule,
+    toggleRule,
+    deleteRule,
+    dismissNewAlert,
+    deleteTriggeredAlert,
+  } = useAlertsStore();
+
   return (
     <div className="min-h-full bg-slate-950/40 text-slate-100 p-4 md:p-6">
       <div className="max-w-[1600px] mx-auto">
-        <header className="mb-6 md:mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-2.5 md:p-3 rounded-xl">
-              <Bell className="size-5 md:size-6 text-white" />
+        <header className="mb-6 md:mb-8 flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-2.5 md:p-3 rounded-xl">
+                <Bell className="size-5 md:size-6 text-white" />
+              </div>
+              <h1 className="text-slate-100">Alerts Center</h1>
             </div>
-            <h1 className="text-slate-100">Alerts Center</h1>
+            <p className="text-slate-400 text-sm md:text-base">
+              Manage all your trading alerts and notification preferences
+            </p>
           </div>
-          <p className="text-slate-400 text-sm md:text-base">
-            Manage all your trading alerts and notification preferences
-          </p>
+          <CreateAlertDialog onCreate={createRule} />
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
@@ -56,7 +54,9 @@ export default function AlertsPage() {
                   <Bell className="size-4 mr-2" />
                   <span className="hidden sm:inline">New Alerts</span>
                   <span className="sm:hidden">New</span>
-                  <Badge className="ml-2 bg-blue-600 text-white border-0">{newAlerts.length}</Badge>
+                  {newAlerts.length > 0 && (
+                    <Badge className="ml-2 bg-blue-600 text-white border-0">{newAlerts.length}</Badge>
+                  )}
                 </TabsTrigger>
                 <TabsTrigger
                   value="triggered"
@@ -77,20 +77,38 @@ export default function AlertsPage() {
 
               <TabsContent value="new" className="mt-6 space-y-4">
                 {newAlerts.map((alert) => (
-                  <AlertCard key={`new-${alert.symbol}-${alert.time}`} {...alert} />
+                  <AlertCard key={alert.id} {...alert} onDismiss={dismissNewAlert} />
                 ))}
+                {newAlerts.length === 0 && (
+                  <div className={emptyCopy}>
+                    No new alerts. We&apos;ll notify you when your rules trigger.
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="triggered" className="mt-6 space-y-4">
                 {triggeredAlerts.map((alert) => (
-                  <AlertCard key={`trig-${alert.symbol}-${alert.time}`} {...alert} />
+                  <AlertCard key={alert.id} {...alert} onDismiss={deleteTriggeredAlert} />
                 ))}
+                {triggeredAlerts.length === 0 && (
+                  <div className={emptyCopy}>Nothing triggered recently.</div>
+                )}
               </TabsContent>
 
               <TabsContent value="rules" className="mt-6 space-y-4">
-                {savedRules.map((rule) => (
-                  <SavedAlertRule key={`rule-${rule.symbol}-${rule.signalType}`} {...rule} />
+                {rules.map((rule) => (
+                  <SavedAlertRule
+                    key={rule.id}
+                    {...rule}
+                    onToggle={toggleRule}
+                    onDelete={deleteRule}
+                  />
                 ))}
+                {rules.length === 0 && (
+                  <div className={emptyCopy}>
+                    No saved rules yet. Use <span className="text-blue-400">+ Create Alert</span> above to add one.
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
 
@@ -98,7 +116,7 @@ export default function AlertsPage() {
           </div>
 
           <aside className="lg:col-span-1">
-            <CreateAlertPanel />
+            <CreateAlertPanel onCreate={createRule} />
           </aside>
         </div>
       </div>

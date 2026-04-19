@@ -1,18 +1,15 @@
+import Link from "next/link";
 import { Bell, TrendingUp, TrendingDown, ArrowRight, Trash2, Edit3 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type { AlertEvent, AlertSignalType } from "@/lib/mock-alerts";
 
-export type AlertSignalType = "bullish" | "breakout" | "bearish" | "reversal";
+export type { AlertSignalType };
 
-export interface AlertCardProps {
-  symbol: string;
-  signalType: AlertSignalType;
-  time: string;
-  confidence: number;
-  price?: string;
-  change?: string;
-  isNew?: boolean;
+interface AlertCardProps extends AlertEvent {
+  /** When set, the trash button fires this with the alert id. */
+  onDismiss?: (id: string) => void;
 }
 
 function signalColor(type: AlertSignalType): string {
@@ -45,7 +42,13 @@ function confidenceChip(confidence: number): string {
   return "bg-slate-500/20 text-slate-400 border-slate-500/30";
 }
 
+/** Turn "BTC/USDT" into a route slug like "BTCUSDT". */
+function toSymbolSlug(symbol: string): string {
+  return symbol.replace("/", "");
+}
+
 export function AlertCard({
+  id,
   symbol,
   signalType,
   time,
@@ -53,6 +56,7 @@ export function AlertCard({
   price,
   change,
   isNew,
+  onDismiss,
 }: AlertCardProps) {
   return (
     <Card className="bg-slate-900/50 border-slate-800 hover:border-slate-700 transition-all duration-200 p-4 gap-0">
@@ -102,8 +106,15 @@ export function AlertCard({
         </div>
 
         <div className="flex flex-col gap-2 shrink-0">
-          <Button size="sm" aria-label="Open" className="bg-blue-600 hover:bg-blue-700 text-white h-8 px-3">
-            <ArrowRight className="size-3" />
+          <Button
+            asChild
+            size="sm"
+            aria-label="Open symbol"
+            className="bg-blue-600 hover:bg-blue-700 text-white h-8 px-3"
+          >
+            <Link href={`/symbol/${toSymbolSlug(symbol)}`}>
+              <ArrowRight className="size-3" />
+            </Link>
           </Button>
           <Button
             size="sm"
@@ -116,7 +127,8 @@ export function AlertCard({
           <Button
             size="sm"
             variant="outline"
-            aria-label="Delete"
+            aria-label="Dismiss"
+            onClick={onDismiss ? () => onDismiss(id) : undefined}
             className="border-slate-700 hover:bg-rose-900/20 hover:border-rose-800 h-8 px-3"
           >
             <Trash2 className="size-3" />
