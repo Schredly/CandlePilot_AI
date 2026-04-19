@@ -15,8 +15,12 @@ export type PatternName =
   | "Shooting Star"
   | "Breakout";
 
+/**
+ * A single OHLCV bar. `time` is Unix seconds (the format TradingView
+ * Lightweight Charts expects; also trivially sortable + sendable as JSON).
+ */
 export interface Candle {
-  time: string;
+  time: number;
   open: number;
   high: number;
   low: number;

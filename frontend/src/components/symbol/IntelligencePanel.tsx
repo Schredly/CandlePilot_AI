@@ -1,25 +1,8 @@
 import { TrendingUp, Target, Shield, Clock, Sparkles, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { SignalSummary, TimeframeAlignment, RecentAlert } from "@/lib/mock-symbol";
 
-export interface SignalSummary {
-  direction: "LONG" | "SHORT" | "NEUTRAL";
-  confidence: number;
-  entry: number;
-  stop: number;
-  target: number;
-}
-
-export interface TimeframeAlignment {
-  timeframe: string;
-  trend: "bullish" | "bearish" | "neutral";
-  strength: number;
-}
-
-export interface RecentAlert {
-  time: string;
-  message: string;
-  type: "signal" | "pattern" | "level";
-}
+export type { SignalSummary, TimeframeAlignment, RecentAlert };
 
 interface IntelligencePanelProps {
   signal: SignalSummary;
