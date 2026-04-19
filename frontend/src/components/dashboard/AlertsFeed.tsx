@@ -1,34 +1,28 @@
 import { Bell, AlertTriangle, Info, CheckCircle, type LucideIcon } from "lucide-react";
 import { SectionCard } from "@/components/common/SectionCard";
+import {
+  mockDashboardAlerts,
+  type DashboardAlert,
+  type DashboardAlertKind,
+} from "@/lib/mock-dashboard";
 
-type AlertKind = "success" | "warning" | "info";
-
-interface DashboardAlert {
-  type: AlertKind;
-  message: string;
-  time: string;
+interface AlertsFeedProps {
+  alerts?: DashboardAlert[];
 }
 
-const alerts: DashboardAlert[] = [
-  { type: "success", message: "NVDA hit target price of $890", time: "2m ago" },
-  { type: "warning", message: "High volatility detected in crypto markets", time: "15m ago" },
-  { type: "info", message: "New signal generated for TSLA", time: "32m ago" },
-  { type: "success", message: "SPY breakout confirmed above resistance", time: "1h ago" },
-];
-
-const iconMap: Record<AlertKind, LucideIcon> = {
+const iconMap: Record<DashboardAlertKind, LucideIcon> = {
   success: CheckCircle,
   warning: AlertTriangle,
   info: Info,
 };
 
-const colorMap: Record<AlertKind, string> = {
+const colorMap: Record<DashboardAlertKind, string> = {
   success: "text-green-400 bg-green-500/10",
   warning: "text-yellow-400 bg-yellow-500/10",
   info: "text-blue-400 bg-blue-500/10",
 };
 
-export function AlertsFeed() {
+export function AlertsFeed({ alerts = mockDashboardAlerts }: AlertsFeedProps) {
   return (
     <SectionCard>
       <div className="flex items-center justify-between mb-4 md:mb-5">
@@ -56,6 +50,10 @@ export function AlertsFeed() {
             </li>
           );
         })}
+
+        {alerts.length === 0 && (
+          <li className="text-sm text-white/40 py-6 text-center">No active alerts.</li>
+        )}
       </ul>
     </SectionCard>
   );

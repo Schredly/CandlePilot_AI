@@ -3,25 +3,16 @@
 import { AreaChart, Area, ResponsiveContainer } from "recharts";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { SectionCard } from "@/components/common/SectionCard";
+import { mockMarkets, type MarketTile } from "@/lib/mock-dashboard";
 
-interface MarketTile {
-  symbol: string;
-  name: string;
-  price: string;
-  change: string;
-  trend: "up" | "down";
+interface MarketOverviewProps {
+  markets?: MarketTile[];
 }
 
-const markets: MarketTile[] = [
-  { symbol: "SPY", name: "S&P 500 ETF", price: "512.45", change: "+1.24%", trend: "up" },
-  { symbol: "QQQ", name: "Nasdaq 100 ETF", price: "438.92", change: "+2.15%", trend: "up" },
-  { symbol: "BTC", name: "Bitcoin", price: "67,234", change: "-0.82%", trend: "down" },
-  { symbol: "VIX", name: "Volatility Index", price: "14.23", change: "-3.45%", trend: "down" },
-];
-
 /**
- * Deterministic pseudo-random so SSR and client render the same sparkline.
- * Real implementation will hydrate from market data feed; this keeps hydration clean.
+ * Deterministic pseudo-random so SSR and client render the same sparkline
+ * until real market data replaces the mock. Seeded by the tile index so
+ * swapping tiles produces a different but stable shape.
  */
 function seededSparkline(trend: "up" | "down", seed: number): { value: number }[] {
   const base = 100;
@@ -35,7 +26,7 @@ function seededSparkline(trend: "up" | "down", seed: number): { value: number }[
   }));
 }
 
-export function MarketOverview() {
+export function MarketOverview({ markets = mockMarkets }: MarketOverviewProps) {
   return (
     <SectionCard>
       <h3 className="text-white/90 mb-4 md:mb-5">Market Overview</h3>

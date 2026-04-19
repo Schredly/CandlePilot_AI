@@ -1,23 +1,13 @@
 import Link from "next/link";
 import { TrendingUp, TrendingDown, Zap } from "lucide-react";
 import { SectionCard } from "@/components/common/SectionCard";
+import { mockSignals, type SignalRow } from "@/lib/mock-dashboard";
 
-interface SignalRow {
-  symbol: string;
-  strategy: string;
-  confidence: number;
-  direction: "bullish" | "bearish";
-  trigger: string;
+interface TopSignalsProps {
+  signals?: SignalRow[];
 }
 
-const signals: SignalRow[] = [
-  { symbol: "AAPL", strategy: "Breakout Pattern", confidence: 94, direction: "bullish", trigger: "2m ago" },
-  { symbol: "TSLA", strategy: "RSI Divergence", confidence: 87, direction: "bearish", trigger: "5m ago" },
-  { symbol: "NVDA", strategy: "Moving Average Cross", confidence: 91, direction: "bullish", trigger: "12m ago" },
-  { symbol: "MSFT", strategy: "Volume Surge", confidence: 82, direction: "bullish", trigger: "18m ago" },
-];
-
-export function TopSignals() {
+export function TopSignals({ signals = mockSignals }: TopSignalsProps) {
   return (
     <SectionCard>
       <div className="flex items-center justify-between mb-4 md:mb-5">
@@ -71,6 +61,10 @@ export function TopSignals() {
             </Link>
           </li>
         ))}
+
+        {signals.length === 0 && (
+          <li className="text-sm text-white/40 py-6 text-center">No active signals right now.</li>
+        )}
       </ul>
     </SectionCard>
   );

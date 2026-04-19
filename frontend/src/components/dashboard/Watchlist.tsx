@@ -1,29 +1,20 @@
 import Link from "next/link";
 import { Star, Plus } from "lucide-react";
 import { SectionCard } from "@/components/common/SectionCard";
+import { mockWatchlist, type WatchlistRow } from "@/lib/mock-dashboard";
 
-interface WatchlistRow {
-  symbol: string;
-  name: string;
-  price: string;
-  change: string;
-  isPositive: boolean;
+interface WatchlistProps {
+  items?: WatchlistRow[];
 }
 
-const items: WatchlistRow[] = [
-  { symbol: "AAPL", name: "Apple Inc.", price: "178.45", change: "+2.34%", isPositive: true },
-  { symbol: "GOOGL", name: "Alphabet Inc.", price: "142.67", change: "+1.89%", isPositive: true },
-  { symbol: "AMZN", name: "Amazon.com", price: "178.23", change: "-0.45%", isPositive: false },
-  { symbol: "META", name: "Meta Platforms", price: "485.92", change: "+3.12%", isPositive: true },
-  { symbol: "NFLX", name: "Netflix Inc.", price: "612.34", change: "-1.23%", isPositive: false },
-  { symbol: "AMD", name: "AMD Inc.", price: "182.45", change: "+4.56%", isPositive: true },
-];
-
-export function Watchlist() {
+export function Watchlist({ items = mockWatchlist }: WatchlistProps) {
   return (
     <SectionCard>
       <div className="flex items-center justify-between mb-4 md:mb-5">
-        <h3 className="text-white/90">Watchlist</h3>
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-white/90">Watchlist</h3>
+          <span className="text-xs text-white/40 tabular-nums">{items.length}</span>
+        </div>
         <button
           type="button"
           aria-label="Add to watchlist"
@@ -61,6 +52,10 @@ export function Watchlist() {
             </Link>
           </li>
         ))}
+
+        {items.length === 0 && (
+          <li className="text-sm text-white/40 py-6 text-center">Your watchlist is empty.</li>
+        )}
       </ul>
     </SectionCard>
   );
