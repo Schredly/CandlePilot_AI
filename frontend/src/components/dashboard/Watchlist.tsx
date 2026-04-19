@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Star, Plus } from "lucide-react";
+import { SectionCard } from "@/components/common/SectionCard";
 
 interface WatchlistRow {
   symbol: string;
@@ -20,7 +21,7 @@ const items: WatchlistRow[] = [
 
 export function Watchlist() {
   return (
-    <section className="bg-gradient-to-br from-[#0F0F14] to-[#0A0A0F] rounded-2xl border border-white/5 p-5 md:p-6">
+    <SectionCard>
       <div className="flex items-center justify-between mb-4 md:mb-5">
         <h3 className="text-white/90">Watchlist</h3>
         <button
@@ -61,6 +62,6 @@ export function Watchlist() {
           </li>
         ))}
       </ul>
-    </section>
+    </SectionCard>
   );
 }

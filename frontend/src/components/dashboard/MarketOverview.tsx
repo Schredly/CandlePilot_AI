@@ -2,6 +2,7 @@
 
 import { AreaChart, Area, ResponsiveContainer } from "recharts";
 import { TrendingUp, TrendingDown } from "lucide-react";
+import { SectionCard } from "@/components/common/SectionCard";
 
 interface MarketTile {
   symbol: string;
@@ -36,7 +37,7 @@ function seededSparkline(trend: "up" | "down", seed: number): { value: number }[
 
 export function MarketOverview() {
   return (
-    <section className="bg-gradient-to-br from-[#0F0F14] to-[#0A0A0F] rounded-2xl border border-white/5 p-5 md:p-6">
+    <SectionCard>
       <h3 className="text-white/90 mb-4 md:mb-5">Market Overview</h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
@@ -94,6 +95,6 @@ export function MarketOverview() {
           </article>
         ))}
       </div>
-    </section>
+    </SectionCard>
   );
 }

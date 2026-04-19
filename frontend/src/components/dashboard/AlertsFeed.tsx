@@ -1,4 +1,5 @@
 import { Bell, AlertTriangle, Info, CheckCircle, type LucideIcon } from "lucide-react";
+import { SectionCard } from "@/components/common/SectionCard";
 
 type AlertKind = "success" | "warning" | "info";
 
@@ -29,7 +30,7 @@ const colorMap: Record<AlertKind, string> = {
 
 export function AlertsFeed() {
   return (
-    <section className="bg-gradient-to-br from-[#0F0F14] to-[#0A0A0F] rounded-2xl border border-white/5 p-5 md:p-6">
+    <SectionCard>
       <div className="flex items-center justify-between mb-4 md:mb-5">
         <h3 className="text-white/90">Active Alerts</h3>
         <Bell className="w-4 h-4 text-white/40" />
@@ -56,6 +57,6 @@ export function AlertsFeed() {
           );
         })}
       </ul>
-    </section>
+    </SectionCard>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TrendingUp, TrendingDown, Zap } from "lucide-react";
+import { SectionCard } from "@/components/common/SectionCard";
 
 interface SignalRow {
   symbol: string;
@@ -18,7 +19,7 @@ const signals: SignalRow[] = [
 
 export function TopSignals() {
   return (
-    <section className="bg-gradient-to-br from-[#0F0F14] to-[#0A0A0F] rounded-2xl border border-white/5 p-5 md:p-6">
+    <SectionCard>
       <div className="flex items-center justify-between mb-4 md:mb-5">
         <h3 className="text-white/90">Top Signals Today</h3>
         <Zap className="w-4 h-4 text-yellow-400" />
@@ -71,6 +72,6 @@ export function TopSignals() {
           </li>
         ))}
       </ul>
-    </section>
+    </SectionCard>
   );
 }
