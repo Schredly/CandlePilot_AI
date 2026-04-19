@@ -4,7 +4,7 @@ import { SectionCard } from "@/components/common/SectionCard";
 
 export default function NotFound() {
   return (
-    <div className="flex-1 flex items-center justify-center px-4 py-16 min-h-[calc(100vh-3.5rem)] md:min-h-[calc(100vh-4rem)]">
+    <main className="min-h-screen flex items-center justify-center px-4 py-16 bg-[#060609]">
       <SectionCard padding="lg" className="max-w-md text-center space-y-6">
         <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
           <Compass className="w-7 h-7 text-white" />
@@ -22,6 +22,6 @@ export default function NotFound() {
           Return to dashboard
         </Link>
       </SectionCard>
-    </div>
+    </main>
   );
 }

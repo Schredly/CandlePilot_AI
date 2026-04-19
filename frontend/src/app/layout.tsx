@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { AppShell } from "@/components/layout/AppShell";
+import { AuthProvider } from "@/lib/auth/provider";
 import "./globals.css";
 
 const inter = Inter({
@@ -26,11 +26,17 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
+/**
+ * Root layout wraps every route — authenticated and unauthenticated — in the
+ * AuthProvider + dark theme. The AppShell (sidebar, top bar, mobile nav)
+ * lives one level deeper in app/(protected)/layout.tsx so the login/register
+ * pages don't render surrounded by chrome they can't navigate.
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`dark ${inter.variable}`}>
       <body className="font-sans antialiased min-h-screen bg-[#060609]">
-        <AppShell>{children}</AppShell>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

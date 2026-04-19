@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { User } from "lucide-react";
 import { SettingsSection } from "@/components/settings/SettingsSection";
 import { SettingRow } from "@/components/settings/SettingRow";
 import { Toggle } from "@/components/settings/Toggle";
 import { PlanCard } from "@/components/settings/PlanCard";
 import { BrokerGrid } from "@/components/settings/BrokerGrid";
 import { ApiKeyRow } from "@/components/settings/ApiKeyRow";
+import { ProfileSection } from "@/components/settings/ProfileSection";
 
 export const metadata: Metadata = { title: "Settings" };
 
@@ -25,36 +25,7 @@ export default function SettingsPage() {
 
         <div className="space-y-6 md:space-y-8">
           <SettingsSection title="Profile" description="Manage your account information">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                <User className="w-10 h-10 text-primary" />
-              </div>
-              <button
-                type="button"
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity text-sm"
-              >
-                Change Avatar
-              </button>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="profile-name" className="block text-muted-foreground text-sm mb-2">
-                  Full Name
-                </label>
-                <input id="profile-name" type="text" defaultValue="Alex Morgan" className={inputCls} />
-              </div>
-              <div>
-                <label htmlFor="profile-email" className="block text-muted-foreground text-sm mb-2">
-                  Email Address
-                </label>
-                <input
-                  id="profile-email"
-                  type="email"
-                  defaultValue="alex.morgan@example.com"
-                  className={inputCls}
-                />
-              </div>
-            </div>
+            <ProfileSection />
           </SettingsSection>
 
           <SettingsSection title="Broker Integrations" description="Connect your trading accounts">
