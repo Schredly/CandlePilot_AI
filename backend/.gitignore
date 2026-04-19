@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Virtual envs
+.venv/
+venv/
+
+# Environment
+.env
+.env.local
+
+# uv
+uv.lock
+
+# Build artifacts
+build/
+dist/
