@@ -14,6 +14,7 @@ import logging
 from typing import Any
 
 from app.patterns.engine import PatternEngine
+from app.strategies.engine import StrategyEngine
 
 from .aggregator import CandleAggregator
 from .hub import StreamHub
@@ -30,11 +31,13 @@ class MarketDataService:
         timeframes: list[Timeframe] | None = None,
         reconnect_seconds: float = 5.0,
         pattern_engine: PatternEngine | None = None,
+        strategy_engine: StrategyEngine | None = None,
     ) -> None:
         self.provider = provider
         self.aggregator = CandleAggregator(list(timeframes or ALL_TIMEFRAMES))
         self.hub = StreamHub()
         self.patterns = pattern_engine
+        self.strategies = strategy_engine
         self._task: asyncio.Task[None] | None = None
         self._reconnect_seconds = reconnect_seconds
         self._running = False
@@ -97,8 +100,8 @@ class MarketDataService:
                                 "candle": update.candle.model_dump(),
                             },
                         )
-                        # Fan pattern detections out through the same hub so any client
-                        # subscribed to (symbol, timeframe) gets both kinds of events.
+                        # Fan pattern + strategy events out through the same hub so any
+                        # client subscribed to (symbol, timeframe) gets all three streams.
                         if update.closed and self.patterns is not None:
                             for detected in self.patterns.on_closed_candle(
                                 sym, update.timeframe, update.candle
@@ -111,6 +114,21 @@ class MarketDataService:
                                         "symbol": sym,
                                         "timeframe": update.timeframe,
                                         "pattern": detected.model_dump(),
+                                    },
+                                )
+
+                        if update.closed and self.strategies is not None:
+                            for signal in self.strategies.on_closed_candle(
+                                sym, update.timeframe, update.candle
+                            ):
+                                await self.hub.publish(
+                                    sym,
+                                    update.timeframe,
+                                    {
+                                        "type": "strategy.signal",
+                                        "symbol": sym,
+                                        "timeframe": update.timeframe,
+                                        "signal": signal.model_dump(),
                                     },
                                 )
             except asyncio.CancelledError:
