@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CandlePilot</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body class="dark">
+    <header class="topbar">
+      <div class="logo">
+        <span class="logo-mark" aria-hidden="true">✦</span>
+        <span class="logo-text">CandlePilot</span>
+      </div>
+      <button id="openApp" class="ghost-btn" title="Open full app in a new tab">Open app ↗</button>
+    </header>
+
+    <section class="symbol-card" id="symbolCard">
+      <div class="symbol-head">
+        <div>
+          <div class="muted small">Detected symbol</div>
+          <div class="symbol-ticker" id="symbolTicker">—</div>
+        </div>
+        <div class="timeframe-picker">
+          <label for="timeframe" class="muted small">Timeframe</label>
+          <select id="timeframe">
+            <option value="1m">1m</option>
+            <option value="5m">5m</option>
+            <option value="15m">15m</option>
+            <option value="1h" selected>1h</option>
+            <option value="4h">4h</option>
+            <option value="1d">1d</option>
+          </select>
+        </div>
+      </div>
+      <div class="symbol-url muted small" id="symbolSource"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="signalsHead">
+      <div class="panel-head">
+        <h2 id="signalsHead">Recent signals</h2>
+        <button id="refresh" class="ghost-btn" title="Refresh">↻</button>
+      </div>
+      <ul id="signals" class="list"></ul>
+      <div id="signalsEmpty" class="empty hidden">No strategy signals yet.</div>
+    </section>
+
+    <section class="panel" aria-labelledby="patternsHead">
+      <div class="panel-head">
+        <h2 id="patternsHead">Recent patterns</h2>
+      </div>
+      <ul id="patterns" class="list"></ul>
+      <div id="patternsEmpty" class="empty hidden">No patterns detected yet.</div>
+    </section>
+
+    <section id="noSymbol" class="no-symbol hidden">
+      <p>Navigate to a symbol page to see quick signals here.</p>
+      <p class="muted small">
+        Supported: Yahoo Finance, TradingView, Google Finance, Schwab, or any URL with
+        <code>?symbol=XXX</code>.
+      </p>
+    </section>
+
+    <footer class="footer muted small">
+      <span id="status">—</span>
+      <a href="#" id="openOptions">Settings</a>
+    </footer>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

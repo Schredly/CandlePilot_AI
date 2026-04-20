@@ -69,9 +69,12 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
+    # Browser-extension popups fetch from chrome-extension://<id> origins; a
+    # regex lets us accept any installed extension id without per-install config.
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins(),
+        allow_origin_regex=r"chrome-extension://.*",
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

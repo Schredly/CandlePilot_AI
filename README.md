@@ -9,9 +9,11 @@ setups, patterns, and opportunities with confidence scoring. Not an auto-trader.
 CandlePilot_AI/
 ├── frontend/       Next.js 15 (App Router) + Tailwind v4 + shadcn/ui
 ├── backend/        FastAPI + SQLAlchemy (async) — market data, signals, alerts
+├── extension/      Chrome (MV3) companion — quick signals from any symbol page
 ├── docs/           Architecture and developer docs
 ├── ai-context/     Product spec — source of truth for scope
-└── .env.example    Reference inventory of every env var (both services)
+├── ledger/         Per-sprint change log (ledger/CP-<nnn>.md)
+└── .env.example    Reference inventory of every env var
 ```
 
 ## Quick start
@@ -40,13 +42,13 @@ service layout. Current progress:
 | CP-002 | ✅     | Figma core layout (sidebar, topbar, mobile nav)            |
 | CP-003 | ✅     | Dashboard UI                                               |
 | CP-004 | ✅     | Scanner UI                                                 |
-| CP-005 | ✅     | Symbol Detail UI (candles render via Recharts)             |
-| CP-006 | ◐     | Alerts UI; backend + delivery pending                      |
-| CP-007 | ◐     | Settings UI; auth (Clerk/Supabase) pending                 |
-| CP-008 | ⬜     | Real-time data engine                                      |
-| CP-009 | ⬜     | Pattern engine                                             |
-| CP-010 | ⬜     | Strategy engine                                            |
-| CP-011 | ◐     | Backtesting UI; engine pending                             |
-| CP-012 | ⬜     | Browser extension (Schwab companion)                       |
+| CP-005 | ✅     | Symbol Detail UI (TradingView Lightweight Charts)          |
+| CP-006 | ✅     | Alerts UI + localStorage mock persistence                  |
+| CP-007 | ◐     | Settings + placeholder auth (Clerk/Supabase pending)       |
+| CP-008 | ✅     | Real-time data engine (MockProvider + WS fan-out)          |
+| CP-009 | ✅     | Pattern engine (5 detectors)                               |
+| CP-010 | ✅     | Strategy engine (5 strategies)                             |
+| CP-011 | ◐     | Backtest runner done; UI wiring pending                    |
+| CP-012 | ✅     | Chrome extension companion                                 |
 | CP-013 | ⬜     | AI explanation layer                                       |
 | CP-014 | ⬜     | Production hardening                                       |

@@ -1,4 +1,4 @@
-.PHONY: help install frontend backend dev build typecheck clean
+.PHONY: help install frontend backend extension dev build typecheck clean
 
 help:
 	@echo "CandlePilot AI — monorepo dev targets"
@@ -6,6 +6,7 @@ help:
 	@echo "  make install       Install both frontend and backend dependencies"
 	@echo "  make frontend      Run the Next.js dev server (port 3000)"
 	@echo "  make backend       Run the FastAPI dev server (port 8000)"
+	@echo "  make extension     Print Chrome load-unpacked instructions"
 	@echo "  make build         Build the production frontend"
 	@echo "  make typecheck     Typecheck the frontend"
 	@echo "  make clean         Remove build artifacts and caches"
@@ -19,6 +20,13 @@ frontend:
 
 backend:
 	cd backend && uv run uvicorn app.main:app --reload --port 8000
+
+extension:
+	@echo "Load the Chrome extension:"
+	@echo "  1. Open chrome://extensions"
+	@echo "  2. Enable Developer mode"
+	@echo "  3. Click 'Load unpacked' and pick the extension/ directory"
+	@echo "  (see extension/README.md for details)"
 
 build:
 	cd frontend && pnpm build

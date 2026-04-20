@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "CandlePilot Companion",
+  "version": "0.1.0",
+  "description": "Quick signals and patterns from CandlePilot AI for the symbol you're viewing.",
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "CandlePilot"
+  },
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": [
+    "http://localhost:8000/*",
+    "http://localhost:3000/*",
+    "https://finance.yahoo.com/*",
+    "https://www.tradingview.com/*",
+    "https://www.google.com/finance/*",
+    "https://*.schwab.com/*"
+  ],
+  "options_ui": {
+    "page": "popup/options.html",
+    "open_in_tab": false
+  }
+}
