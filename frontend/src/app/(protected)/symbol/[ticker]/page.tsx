@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Star, MoreVertical } from "lucide-react";
-import { CandlestickChart } from "@/components/symbol/CandlestickChart";
+import { LiveCandlestickChart } from "@/components/symbol/LiveCandlestickChart";
 import { TradeJournal } from "@/components/symbol/TradeJournal";
 import { IntelligencePanel } from "@/components/symbol/IntelligencePanel";
 import { getMockSymbolDetail } from "@/lib/mock-symbol";
@@ -71,7 +71,13 @@ export default async function SymbolPage({ params }: SymbolPageProps) {
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-4 md:gap-6 p-4 md:p-6 overflow-hidden min-h-0">
         <div className="flex flex-col gap-4 md:gap-6 min-h-0">
           <div className="flex-1 border border-zinc-800 rounded-xl bg-zinc-900/30 p-4 md:p-5 overflow-hidden min-h-[340px]">
-            <CandlestickChart data={candles} patterns={patterns} levels={levels} />
+            <LiveCandlestickChart
+              symbol={ticker}
+              timeframe="1h"
+              initial={candles}
+              patterns={patterns}
+              levels={levels}
+            />
           </div>
           <TradeJournal />
         </div>
