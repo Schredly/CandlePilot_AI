@@ -19,6 +19,7 @@ from app.core.config import get_settings
 from app.market_data.provider import MarketDataProvider
 from app.market_data.providers.mock import MockProvider
 from app.market_data.service import MarketDataService
+from app.patterns.engine import PatternEngine
 
 log = logging.getLogger(__name__)
 
@@ -41,10 +42,10 @@ def _build_provider() -> MarketDataProvider:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    service = MarketDataService(_build_provider())
+    service = MarketDataService(_build_provider(), pattern_engine=PatternEngine())
     await service.start()
     app.state.market_data = service
-    log.info("market-data service started")
+    log.info("market-data service started (patterns enabled)")
     try:
         yield
     finally:

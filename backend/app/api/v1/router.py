@@ -6,8 +6,9 @@ scattering include_router calls across main.py.
 
 from fastapi import APIRouter
 
-from . import candles
+from . import candles, patterns
 
 router = APIRouter(prefix="/v1")
 
 router.include_router(candles.router)
+router.include_router(patterns.router)

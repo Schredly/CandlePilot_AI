@@ -13,6 +13,8 @@ import asyncio
 import logging
 from typing import Any
 
+from app.patterns.engine import PatternEngine
+
 from .aggregator import CandleAggregator
 from .hub import StreamHub
 from .provider import MarketDataProvider
@@ -27,10 +29,12 @@ class MarketDataService:
         provider: MarketDataProvider,
         timeframes: list[Timeframe] | None = None,
         reconnect_seconds: float = 5.0,
+        pattern_engine: PatternEngine | None = None,
     ) -> None:
         self.provider = provider
         self.aggregator = CandleAggregator(list(timeframes or ALL_TIMEFRAMES))
         self.hub = StreamHub()
+        self.patterns = pattern_engine
         self._task: asyncio.Task[None] | None = None
         self._reconnect_seconds = reconnect_seconds
         self._running = False
@@ -93,6 +97,22 @@ class MarketDataService:
                                 "candle": update.candle.model_dump(),
                             },
                         )
+                        # Fan pattern detections out through the same hub so any client
+                        # subscribed to (symbol, timeframe) gets both kinds of events.
+                        if update.closed and self.patterns is not None:
+                            for detected in self.patterns.on_closed_candle(
+                                sym, update.timeframe, update.candle
+                            ):
+                                await self.hub.publish(
+                                    sym,
+                                    update.timeframe,
+                                    {
+                                        "type": "pattern.detected",
+                                        "symbol": sym,
+                                        "timeframe": update.timeframe,
+                                        "pattern": detected.model_dump(),
+                                    },
+                                )
             except asyncio.CancelledError:
                 raise
             except Exception:  # noqa: BLE001 — intentional catch-all for reconnect
